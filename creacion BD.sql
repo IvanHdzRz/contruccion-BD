@@ -28,6 +28,7 @@ PRIMARY KEY (id_tipo_art)
 
 CREATE TABLE articulos(
 id_articulo		INT NOT NULL AUTO_INCREMENT,
+nombre				VARCHAR(255) NOT NULL,
 precio			FLOAT NOT NULL,
 activo			BOOL CHECK (activo IN (0,1)) NOT NULL,
 tipo_articulo	INT NOT NULL,
@@ -54,6 +55,19 @@ FOREIGN KEY (id_categoria)	REFERENCES categorias(id_categoria),
 FOREIGN KEY (id_unidad)		REFERENCES unidades(id_unidad)
 );
 
+CREATE TABLE servicios (
+id_servicio			INT NOT NULL,
+nombre				VARCHAR(255) NOT NULL UNIQUE,
+descripcion			TINYTEXT,
+FOREIGN KEY (id_servicio) REFERENCES articulos(id_articulo)
+);
 
+CREATE TABLE insumos_servicios(
+id_servicio INT NOT NULL,
+id_producto INT NOT NULL,
+cantidad	FLOAT NOT NULL,
+FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio),
+FOREIGN KEY (id_producto) REFERENCES productos(id_articulo)
+);
 
 		
