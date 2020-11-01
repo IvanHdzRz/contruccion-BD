@@ -1,5 +1,4 @@
 /*NOTA agregar faccionable a tabla de articulos*/
-
 /*SELECCION QUE TRAE productos*/
 SELECT 	productos.id_articulo, productos.nombre,marcas.nombre_marca, categorias.nombre_categoria, 
 		productos.contenido,unidades.abreviacion_unidad,articulos.precio,productos.fraccionable,productos.codigo_barras,
@@ -41,13 +40,44 @@ FROM detalle_promociones
 INNER JOIN productos ON productos.id_articulo=detalle_promociones.id_producto
 INNER JOIN promociones ON promociones.id_promocion=detalle_promociones.id_promocion;
 
+
 /*obtener existencias de una promocion*/
 SELECT detalle_promociones.id_promocion, promociones.nombre,productos.nombre,detalle_promociones.cantidad
 FROM detalle_promociones 
 INNER JOIN productos ON productos.id_articulo=detalle_promociones.id_producto
 INNER JOIN promociones ON promociones.id_promocion=detalle_promociones.id_promocion;
 
+/*OBTENER LOS PERMISOS DE UN ROL*/
+SELECT roles.nombre, permisos.nombre, permisos_rol.autorizado
+FROM permisos_rol
+INNER JOIN roles ON roles.id=permisos_rol.id_rol
+INNER JOIN permisos ON permisos.id=permisos_rol.id_permiso;
+/*OBTENER INF DE USUARIO*/
+SELECT usuarios.nombre_usuario, roles.nombre, usuarios.nombre
+FROM usuarios
+INNER JOIN roles ON roles.id=usuarios.id_rol;
 
+/*select de ventas*/
+
+SELECT v.id ,v.id_empleado,c.nombre,v.fecha,v.importe
+FROM ventas AS v
+INNER JOIN clientes AS c ON c.id=v.id_cliente;
+/*SELECT DE detalle de ventas*/
+SELECT dv.id_venta, articulos.nombre, dv.precio,dv.cantidad, (dv.cantidad*dv.precio) AS 'total'
+FROM detalle_ventas AS dv
+INNER JOIN articulos ON articulos.id_articulo=dv.id_articulo;
+/*select de compras*/
+SELECT c.id_compra,c.id_usuario,p.nombre,c.importe,c.fecha
+FROM compras AS c
+INNER JOIN proveedores AS p ON p.id=c.id_proveedor;
+/*select de detalle de compras*/
+SELECT dc.id_compra,p.nombre,dc.cantidad,dc.costo_unitario, (dc.cantidad*dc.costo_unitario) AS 'total'
+FROM detalle_compras AS dc
+INNER JOIN productos AS p ON p.id_articulo=dc.id_producto;
+/*select de  mermas*/
+SELECT m.id_merma, m.id_usuario,productos.nombre,m.cantidad,m.precio,(m.precio*m.cantidad) AS 'perdida', m.fecha
+FROM mermas AS m
+INNER JOIN productos ON productos.id_articulo = m.id_producto;
 
 /*INSERCIONES DE ARTICULOS*/
 INSERT INTO articulos (nombre,precio,activo,tipo_articulo) VAlUES ('Hoja papel tamaño carta blanca',.33,1,1);
@@ -70,5 +100,38 @@ INSERT INTO promociones VALUES (10,'regreso a clases','contiene 4 cuadernos prof
 INSERT INTO detalle_promociones VALUES (10,8,4);
 INSERT INTO detalle_promociones VALUES (10,11,2);
 
+/*inserts de permisos*/
 
+INSERT INTO permisos (nombre,descripcion) VALUES ('agregar producto','el usuario puede agregar productos nuevos a la base de datos');
+ /*inserts de roles*/
+ 
+ INSERT INTO roles (nombre,descripcion) VALUES ('administrador','todos los permisos asigandos');
+/*inserts de permisos por rol*/
+INSERT INTO permisos_rol VALUES (1,1,1);
 
+/*insert de usuarios*/
+SELECT * FROM usuarios;
+INSERT INTO usuarios VALUES('ivan',1,'ivan','hdz','rz','mail@mail.com','5512345678','','contrasenia');
+
+/*inserts de tipos de clientes*/
+
+INSERT INTO tipo_clientes (nombre,descuento,compra_minima) VALUES('general',0,0);
+INSERT INTO clientes (nombre, tipo_cliente) VALUES ('cliente general',1);
+
+/*inserts en tabla ventas*/
+
+INSERT INTO ventas (id_empleado,fecha,subtotal,importe) VALUES ('ivan','2020-10-10',60,60);
+
+/*insert en detalle de ventas*/
+INSERT INTO detalle_ventas VALUES (1,8,20,3);
+
+INSERT INTO proveedores (nombre) VALUES ('desconocido');
+
+INSERT INTO compras (id_usuario,id_proveedor,importe,fecha) VALUES ('ivan',1,260,'2020-10-01');
+SELECT * FROM detalle_compras;
+INSERT INTO detalle_compras VALUES (2,8,20,13);
+
+INSERT INTO mermas (id_usuario,id_producto,cantidad,precio,fecha) VALUES ('ivan',8,1,20,'2020-10-02');
+
+insert into producto_negado(nombre,descripcion) VALUES ('lluvia', 'adorno de tiras que se pega en el techo');
+SELECT * FROM producto_negado;
