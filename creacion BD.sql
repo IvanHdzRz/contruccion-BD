@@ -28,6 +28,7 @@ PRIMARY KEY (id_tipo_art)
 
 CREATE TABLE articulos(
 id_articulo		INT NOT NULL AUTO_INCREMENT,
+imagen_url			TINYTEXT,
 nombre				VARCHAR(255) NOT NULL,
 precio			FLOAT NOT NULL,
 activo			BOOL CHECK (activo IN (0,1)) NOT NULL,
@@ -37,7 +38,7 @@ PRIMARY KEY (id_articulo)
 );
 
 CREATE TABLE productos(
-id_articulo 		INT NOT NULL,
+id_articulo 		INT NOT NULL UNIQUE,
 id_marca			INT NOT NULL,
 id_categoria 		INT NOT NULL,
 id_unidad			INT NOT NULL,
@@ -45,7 +46,6 @@ nombre				VARCHAR(255) NOT NULL,
 contenido			FLOAT NOT NULL,
 fraccionable 		BOOL CHECK (fraccionable IN (0,1)) NOT NULL,
 codigo_barras		VARCHAR(20),
-imagen_url			TINYTEXT,
 stock 				FLOAT NOT NULL,
 stock_minimo		FLOAT NOT NULL,
  UNIQUE KEY producto_unico (id_articulo,id_marca,id_categoria,id_unidad,nombre,contenido,fraccionable),
@@ -56,7 +56,7 @@ FOREIGN KEY (id_unidad)		REFERENCES unidades(id_unidad)
 );
 
 CREATE TABLE servicios (
-id_servicio			INT NOT NULL,
+id_servicio			INT NOT NULL UNIQUE,
 nombre				VARCHAR(255) NOT NULL UNIQUE,
 descripcion			TINYTEXT,
 FOREIGN KEY (id_servicio) REFERENCES articulos(id_articulo)
@@ -68,6 +68,23 @@ id_producto INT NOT NULL,
 cantidad	FLOAT NOT NULL,
 FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio),
 FOREIGN KEY (id_producto) REFERENCES productos(id_articulo)
+);
+
+CREATE TABLE promociones(
+id_promocion	INT NOT NULL UNIQUE,
+nombre			VARCHAR(255) NOT NULL UNIQUE,
+descripcion		TEXT NOT NULL,
+fecha_inicio	DATE NOT NULL,
+fecha_fin		DATE NOT NULL,
+FOREIGN KEY (id_promocion) REFERENCES articulos(id_articulo)
+);
+
+CREATE TABLE detalle_promociones(
+id_promocion	INT NOT NULL,
+id_producto		INT NOT NULL,
+cantidad		FLOAT,
+FOREIGN KEY (id_promocion) 	REFERENCES promociones(id_promocion),
+FOREIGN KEY (id_producto) 	REFERENCES productos(id_articulo)
 );
 
 		
